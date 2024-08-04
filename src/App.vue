@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import CodeInspect from "./components/CodeInspect.vue"
 
+const comment = ref([])
+
+window.addEventListener('pywebviewready', function () {
+  window.pywebview.api.scan_directory().then((ret: any) => {
+    for (let item in ret) {
+      comment.value.push(ret[item])
+    }
+  })
+})
+
 const data = [
   {
     "id": 1,
@@ -55,8 +65,8 @@ const data = [
     <el-auto-resizer>
       <template #default="{ height }">
         <el-table :data="data" :height="height" row-key="id">
-          <el-table-column prop="label" label="Name" width="200" sortable />
-          <el-table-column prop="prop.type" label="Type" width="400" sortable />
+          <el-table-column prop="label" label="Name" width="200" sortable/>
+          <el-table-column prop="prop.type" label="Type" width="400" sortable/>
           <el-table-column label="Struct" width="800px">
             <template #default="scope">
               <CodeInspect v-if="scope.row.prop.struct" :code="scope.row.prop.struct" :type="scope.row.prop.type">
@@ -69,6 +79,7 @@ const data = [
         </el-table>
       </template>
     </el-auto-resizer>
+    {{ comment }}
   </div>
 </template>
 
